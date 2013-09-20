@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Open Weather</title>
+    <link rel="shortcut icon" href="images/icon16.png" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" media="all" href="css/app.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Open Weather</h1>
+        <div class="weather-widget-wrapper">
+            <span class="set-units">
+                <ul>
+                    <li data-action="set-units" data-units="metric" data-symbol="&#8451;" data-windunits="m/s" class="active">&#8451;</li>
+                    <li data-action="set-units" data-units="imperial" data-symbol="&#8457;" data-windunits="mph">&#8457;</li>
+                </ul>
+            </span>
+            <div class="weather-widget">
+                <div id="weather-current">
+                    <div class="loading-current"></div>
+                    <table class="current"></table>
+                </div>
+                <div id="weather-forecast">
+                    <div class="loading-forecast"></div>
+                    <div class="forecast"></div>
+                    <div class="weather-data-source">天气数据 <a href="http://openweathermap.org/" target="_blank">OpenWeatherMap.org</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="scripts/jquery.min.js"></script>
+    <script src="scripts/cufon/cufon-yui.js"></script>
+    <script src="scripts/cufon/Helvetica_Neue_100.font.js"></script>
+    <script src="scripts/app.js"></script>
+</body>
+
+</html>
