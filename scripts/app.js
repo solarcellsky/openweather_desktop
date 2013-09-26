@@ -46,49 +46,46 @@ var weatherWidget = function(units, symbol, windunits) {
                     $.fillmore({
                         src: 'bg/' + data.weather[0].icon + '.jpg'
                     });
-                    var details = '<tbody>';
-                    details += '<tr><td rowspan="6" class="weather-icon" valign="top" style="background:url(weather_icons/' + data.weather[0].icon + '.png) no-repeat center 75px">';
-                    details += '<div class="weather-sum"><div class="location">';
+                    var details = '<div class="location">';
                     details += data.name;
                     details += ' , ';
                     details += data.sys.country
-                    details += '</div>';
+                    details += '  ';
                     details += getDates(data.dt);
-                    details += ' ';
+                    details += ' , ';
                     details += getTimes(data.dt);
-                    details += '<br />';
+                    details += '</div>';
+                    details += '<div class="weather-sum">';
                     details += data.weather[0].description;
                     details += ' , \u98CE\u5411 ';
                     details += degToCompass(data.wind.deg);
                     details += ' (';
                     details += (data.wind.deg).toFixed(2);
                     details += ' &deg;)</div>';
-                    details += '</td><td colspan="2"><div class="temp"><span class="weather-current-temp">';
+                    details += '<div class="weather-icon" style="background:url(weather_icons/' + data.weather[0].icon + '.png) no-repeat 0 0"></div>';
+                    details += '<div class="temp"><span class="weather-current-temp">';
                     details += (data.main.temp).toFixed(1);
-                    details += '</span><em>' + symbol + '</em></div></td></tr>';
-                    details += '<tr><td>\u6E7F\u5EA6:</td><td>';
+                    details += '</span><em>' + symbol + '</em></div>';
+                    details += '<div class="details">\u6E7F\u5EA6:';
                     details += data.main.humidity;
-                    details += ' %</td></tr>';
-                    details += '<tr><td>\u98CE\u901F:</td><td>';
+                    details += ' % ';
+                    details += '\u98CE\u901F:';
                     details += data.wind.speed;
-                    details += ' ' + windunits + '</td></tr>';
-                    details += '<tr><td>\u6C14\u538B:</td><td>';
+                    details += ' ' + windunits + ' ';
+                    details += '\u6C14\u538B:';
                     details += data.main.pressure;
-                    details += ' hPa</td></tr>';
-                    details += '<tr><td>\u65E5\u51FA:</td><td>';
-                    details += getTimes(data.sys.sunrise);
-                    details += '</td></tr>';
-                    details += '<tr><td>\u65E5\u843D:</td><td>';
+                    details += ' hPa<br>';
+                    details += '\u65E5\u51FA:';
+                    details += getTimes(data.sys.sunrise) + ' ';
+                    details += '\u65E5\u843D:';
                     details += getTimes(data.sys.sunset);
-                    details += '</td></tr>';
-                    details += '<tbody>';
-                    $('table.current').append(details);
+                    details += '</div>';
+                    $('.current').append(details);
                     Cufon.replace('.weather-current-temp', {
                         color: '#0066cc',
                         fontFamily: 'Helvetica Neue'
                     });
-                    $('.loading-current,.disabled').remove();
-                    console.log(resp.weather[0].icon);
+                    $('.disabled').remove();
                 }
             };
             xhrForecast.onreadystatechange = function() {
@@ -99,7 +96,7 @@ var weatherWidget = function(units, symbol, windunits) {
                     for (var i = 0; i < len; i++) {
                         var item = '<ul class="day-details"><li>';
                         item += getDates(data.list[i].dt);
-                        item += '</li><li style="height:120px;background:url(weather_icons/s/' + data.list[i].weather[0].icon + '.png) no-repeat center center;background-size:70%">';
+                        item += '</li><li style="height:36px;background:url(weather_icons/s/' + data.list[i].weather[0].icon + '.png) no-repeat center bottom;background-size:30%">';
                         item += '</li><li>';
                         item += data.list[i].weather[0].description;
                         item += '</li><li>';
@@ -116,7 +113,7 @@ var weatherWidget = function(units, symbol, windunits) {
                         $('.forecast').append(items[j]);
                     };
 
-                    $('.loading-forecast,.disabled').remove();
+                    $('.disabled').remove();
                 }
             }
             xhrCurrent.send();
@@ -133,10 +130,8 @@ var toggleWeatherUnits = function() {
     var symbol = self.data('symbol');
     var windunits = self.data('windunits');
     self.addClass('active').siblings().removeClass('active');
-    $('.set-units').append('<div class="disabled"></div>')
-    $('#weather-current').append('<div class="loading-current"></div>');
-    $('#weather-forecast').append('<div class="loading-forecast"></div>');
-    $('table.current').empty();
+    $('.set-units').append('<div class="disabled"></div>');
+    $('.current').empty();
     $('.forecast').empty();
     weatherWidget(units, symbol, windunits);
 };
