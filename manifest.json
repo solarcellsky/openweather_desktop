@@ -4,7 +4,7 @@
          "scripts": [ "scripts/background.js" ]
       }
    },
-   "description": "\u57FA\u4E8E OpenWeatherMap API, \u81EA\u52A8\u83B7\u53D6\u5730\u7406\u4F4D\u7F6E\u663E\u793A\u5F53\u524D\u53CA\u672A\u67656\u5929\u5929\u6C14\u3002 Based on OpenWeatherMap API to show current weather & the forecast for the next 6 days by your own geo location(this app could detect the your location automatically and just feel free to allow it.).",
+   "description": "\u57FA\u4E8E OpenWeatherMap API, \u81EA\u52A8\u83B7\u53D6\u5730\u7406\u4F4D\u7F6E\u663E\u793A\u5F53\u524D\u53CA\u672A\u67656\u5929\u5929\u6C14\u3002",
    "icons": {
       "128": "images/icon128.png",
       "16": "images/icon16.png",
@@ -14,5 +14,5 @@
    "name": "OpenWeather Desktop",
    "permissions": [ "*://*.openweathermap.org/*", "geolocation" ],
    "update_url": "https://clients2.google.com/service/update2/crx",
-   "version": "1.1.5"
+   "version": "1.1.6"
 }
