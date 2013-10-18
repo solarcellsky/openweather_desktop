@@ -34,8 +34,8 @@ var weatherWidget = function() {
     var cnt = 6;
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
-            var data_current = 'http://api.openweathermap.org/data/2.5/weather?lat=' + position.coords.latitude + '&lon=' + position.coords.longitude + '&units=metric&lang=zh_cn&callback=current';
-            var data_forecast = 'http://api.openweathermap.org/data/2.5/forecast/daily?lat=' + position.coords.latitude + '&lon=' + position.coords.longitude + '&cnt=' + cnt + '&units=metric&lang=zh_cn&callback=forecast';
+            var data_current = 'http://api.openweathermap.org/data/2.5/weather?lat=' + position.coords.latitude + '&lon=' + position.coords.longitude + '&units=metric&lang=zh_cn';
+            var data_forecast = 'http://api.openweathermap.org/data/2.5/forecast/daily?lat=' + position.coords.latitude + '&lon=' + position.coords.longitude + '&cnt=' + cnt + '&units=metric&lang=zh_cn';
             var xhrCurrent = new XMLHttpRequest();
             var xhrForecast = new XMLHttpRequest();
             xhrCurrent.open('GET', data_current, true);
@@ -46,15 +46,16 @@ var weatherWidget = function() {
                     $.fillmore({
                         src: 'bg/' + data.weather[0].icon + '.jpg'
                     });
-                    var details = '<div class="item"><time class="time-now">';
-                        details += data.name;
-                        details += ' , ';
-                        details += data.sys.country
-                        details += '  ';
+                    var details = '<div class="item">';
+                        details += '<time class="time-now">';
                         details += getDates(data.dt);
                         details += ' , ';
                         details += getTimes(data.dt);
-                        details += '</time>';
+                        details += '</time><div class="local">';
+                        details += data.name;
+                        details += ' , ';
+                        details += data.sys.country;
+                        details += '</div>';
                         details += '<p>';
                         details += data.weather[0].description;
                         details += ' , \u98CE\u5411 ';
@@ -62,7 +63,7 @@ var weatherWidget = function() {
                         details += ' (';
                         details += (data.wind.deg).toFixed(2);
                         details += ' &deg;)</p>';
-                        details += '<img src="weather_icons/' + data.weather[0].icon + '.png" class="w-icon-l">';
+                        details += '<span class="w-icon-l" style="display:block;width:175px;height:120px;margin:0 auto;background:url(weather_icons/' + data.weather[0].icon + '.png) no-repeat 0 0"></span>',
                         details += '<h2 class="weather-current-temp">';
                         details += (data.main.temp).toFixed(1);
                         details += '&deg;</h2>';
@@ -71,7 +72,7 @@ var weatherWidget = function() {
                         details += ' % ';
                         details += '\u98CE\u901F:';
                         details += data.wind.speed;
-                        details += ' ' + windunits + ' ';
+                        details += ' m/s ';
                         details += '\u6C14\u538B:';
                         details += data.main.pressure;
                         details += ' hPa<br>';
@@ -92,7 +93,29 @@ var weatherWidget = function() {
             xhrForecast.onreadystatechange = function() {
                 if (xhrForecast.readyState==4 && xhrForecast.status==200) {
                     var data = JSON.parse(xhrForecast.responseText);
-                    
+                    var items = [];
+                    var len = data.list.length;
+                    for (var i = 0; i < len; i++) {
+                        var item = '<ul class="day-item"><li>';
+                        item += getDates(data.list[i].dt);
+                        item += '</li><li>';
+                        item += '<span style="display:block;width:120px;height:82px;margin:0 auto;background:url(weather_icons/s/' + data.list[i].weather[0].icon + '.png) no-repeat 0 0"></span>';
+                        item += '</li><li>';
+                        item += data.list[i].weather[0].description;
+                        item += '</li><li class="max">';
+                        item += (data.list[i].temp.max).toFixed(1) + '&deg;';
+                        item += '</li><li class="min">';
+                        item += (data.list[i].temp.min).toFixed(1) + '&deg;';
+                        item += '</li></ul>';
+
+                        items.push(item);
+                    };
+
+                    for (var j = 0; j < items.length; j++) {
+                        $('#forecast .item').append(items[j]);
+                    };
+
+                    $('.loading').remove();
                 }
             }
             xhrCurrent.send();
@@ -105,15 +128,15 @@ var weatherWidget = function() {
 
 $(function() {
     weatherWidget();
-    // $('#weather').nerveSlider({
-    //     slideTransitionEasing: 'easeOutExpo',
-    //     sliderWidth: '100%',
-    //     sliderHeight: '100%',
-    //     sliderFullscreen: true,
-    //     sliderAutoPlay: false,
-    //     showPause: false,
-    //     waitForLoad: true
-    // });
+    $('#weather').nerveSlider({
+        slideTransitionEasing: 'easeOutExpo',
+        sliderWidth: '100%',
+        sliderHeight: '100%',
+        sliderFullscreen: true,
+        sliderAutoPlay: false,
+        showPause: false,
+        waitForLoad: true
+    });
 });
 
 /*
