@@ -8,30 +8,38 @@
         <link rel="stylesheet" type="text/css" media="all" href="css/app.css">
     </head>
     <body>
-        <h1>Open Weather</h1>
-        <div class="container">
-            <div class="weather-widget-wrapper">
-                <span class="set-units">
-                    <ul>
-                        <li data-action="set-units" data-units="metric" data-symbol="&#8451;" data-windunits="m/s" class="active">&#8451;</li>
-                        <li data-action="set-units" data-units="imperial" data-symbol="&#8457;" data-windunits="mph">&#8457;</li>
-                    </ul>
-                </span>
-                <div class="weather-widget">
-                    <div id="weather-current">
-                        <div class="current"></div>
-                    </div>
-                    <div id="weather-forecast">
-                        <h3>6日天气预报</h3>
-                        <div class="forecast"></div>
-                    </div>
-                    <div class="weather-data-source">天气数据 <a href="http://openweathermap.org/" target="_blank">OpenWeatherMap.org</a></div>
-                </div>
-            </div>
+    <h1>Open Weather</h1>
+    <div class="loading">
+        <div class="loader-wrapper">
+        <div class="windows8">
+        <div class="wBall" id="wBall_1">
+        <div class="wInnerBall">
         </div>
-    <script src="scripts/jquery.min.js"></script>
-    <script src="scripts/cufon/cufon-yui.js"></script>
-    <script src="scripts/cufon/Helvetica_Neue_100.font.js"></script>
-    <script src="scripts/app.js"></script>
+        </div>
+        <div class="wBall" id="wBall_2">
+        <div class="wInnerBall">
+        </div>
+        </div>
+        <div class="wBall" id="wBall_3">
+        <div class="wInnerBall">
+        </div>
+        </div>
+        <div class="wBall" id="wBall_4">
+        <div class="wInnerBall">
+        </div>
+        </div>
+        <div class="wBall" id="wBall_5">
+        <div class="wInnerBall">
+        </div>
+        </div>
+        </div>
+        </div>
+    </div>
+    <div id="weather">
+        <div id="current"></div>
+        <div id="forecast"></div>
+    </div>
+    <div class="weather-data-source">Weather Data from <a href="http://openweathermap.org/" target="_blank">OpenWeatherMap.org</a><br>Design & Code BY Solar@Xi'an China - <a href="https://github.com/solarcellsky" target="_blank">Get Source Code From Github</a></div>
+    <script src="scripts/seajs/sea.js" data-config="config" data-main="app"></script>
     </body>
 </html>

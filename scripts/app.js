@@ -1,149 +1,109 @@
-var getDates = function(UNIX_timestamp) {
-    var a = new Date(UNIX_timestamp * 1000);
-    var months = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
-    var days = ['\u5468\u65E5', '\u5468\u4E00', '\u5468\u4E8C', '\u5468\u4E09', '\u5468\u56DB', '\u5468\u4E94', '\u5468\u516D'];
-    var year = a.getFullYear();
-    var month = months[a.getMonth()];
-    if (month < 10) month = '0' + month;
-    var date = a.getDate();
-    if (date < 10) date = '0' + date;
-    var day = days[a.getDay()];
-    var dates = month + '-' + date + ' , ' + day;
-    return dates;
-};
+define(function(require) {
 
-var getTimes = function(timestamp) {
-    var a = new Date(timestamp * 1000);
-    var hours = a.getHours();
-    if (hours < 10) hours = '0' + hours;
-    var minutes = a.getMinutes();
-    if (minutes < 10) minutes = '0' + minutes;
-    var seconds = a.getSeconds();
-    if (seconds < 10) seconds = '0' + seconds;
-    var times = hours + ':' + minutes + ':' + seconds;
-    return times;
-};
+    require('jquery');
+    require('juicer');
 
-var degToCompass = function(deg) {
-    val = Math.round((deg - 11.25) / 22.5);
-    arr = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
-    return arr[val % 16];
-};
-
-var weatherWidget = function(units, symbol, windunits) {
-    var cnt = 6;
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            var data_current = 'http://api.openweathermap.org/data/2.5/weather?lat=' + position.coords.latitude + '&lon=' + position.coords.longitude + '&units=' + units + '&lang=zh_cn';
-            var data_forecast = 'http://api.openweathermap.org/data/2.5/forecast/daily?lat=' + position.coords.latitude + '&lon=' + position.coords.longitude + '&cnt=' + cnt + '&units=' + units + '&lang=zh_cn';
-            var xhrCurrent = new XMLHttpRequest();
-            var xhrForecast = new XMLHttpRequest();
-            xhrCurrent.open('GET', data_current, true);
-            xhrForecast.open('GET', data_forecast, true);
-            xhrCurrent.onreadystatechange = function() {
-                if (xhrCurrent.readyState==4 && xhrCurrent.status==200) {
-                    var data = JSON.parse(xhrCurrent.responseText);
-                    $.fillmore({
-                        src: 'bg/' + data.weather[0].icon + '.jpg'
-                    });
-                    var details = '<div class="location">';
-                    details += data.name;
-                    details += ' , ';
-                    details += data.sys.country
-                    details += '  ';
-                    details += getDates(data.dt);
-                    details += ' , ';
-                    details += getTimes(data.dt);
-                    details += '</div>';
-                    details += '<div class="weather-sum">';
-                    details += data.weather[0].description;
-                    details += ' , \u98CE\u5411 ';
-                    details += degToCompass(data.wind.deg);
-                    details += ' (';
-                    details += (data.wind.deg).toFixed(2);
-                    details += ' &deg;)</div>';
-                    details += '<div class="weather-icon" style="background:url(weather_icons/' + data.weather[0].icon + '.png) no-repeat 0 0"></div>';
-                    details += '<div class="temp"><span class="weather-current-temp">';
-                    details += (data.main.temp).toFixed(1);
-                    details += '</span><em>' + symbol + '</em></div>';
-                    details += '<div class="details">\u6E7F\u5EA6:';
-                    details += data.main.humidity;
-                    details += ' % ';
-                    details += '\u98CE\u901F:';
-                    details += data.wind.speed;
-                    details += ' ' + windunits + ' ';
-                    details += '\u6C14\u538B:';
-                    details += data.main.pressure;
-                    details += ' hPa<br>';
-                    details += '\u65E5\u51FA:';
-                    details += getTimes(data.sys.sunrise) + ' ';
-                    details += '\u65E5\u843D:';
-                    details += getTimes(data.sys.sunset);
-                    details += '</div>';
-                    $('.current').append(details);
-                    Cufon.replace('.weather-current-temp', {
-                        color: '#0066cc',
-                        fontFamily: 'Helvetica Neue'
-                    });
-                    $('.disabled').remove();
-                }
-            };
-            xhrForecast.onreadystatechange = function() {
-                if (xhrForecast.readyState==4 && xhrForecast.status==200) {
-                    var data = JSON.parse(xhrForecast.responseText);
-                    var items = [];
-                    var len = data.list.length;
-                    for (var i = 0; i < len; i++) {
-                        var item = '<ul class="day-details"><li>';
-                        item += getDates(data.list[i].dt);
-                        item += '</li><li style="height:36px;background:url(weather_icons/s/' + data.list[i].weather[0].icon + '.png) no-repeat center bottom;background-size:30%">';
-                        item += '</li><li>';
-                        item += data.list[i].weather[0].description;
-                        item += '</li><li>';
-                        item += (data.list[i].temp.min).toFixed(1);
-                        item += ' ~ ';
-                        item += (data.list[i].temp.max).toFixed(1);
-                        item += symbol;
-                        item += '</li></ul>';
-
-                        items.push(item);
-                    };
-
-                    for (var j = 0; j < items.length; j++) {
-                        $('.forecast').append(items[j]);
-                    };
-
-                    $('.disabled').remove();
-                }
-            }
-            xhrCurrent.send();
-            xhrForecast.send();
-        });
-    } else {
-        console.log("Geolocation is not supported by this browser.");
+    var getDates = function(UNIX_timestamp) {
+        var a = new Date(UNIX_timestamp * 1000);
+        var months = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+        var days = ['\u5468\u65E5', '\u5468\u4E00', '\u5468\u4E8C', '\u5468\u4E09', '\u5468\u56DB', '\u5468\u4E94', '\u5468\u516D'];
+        var year = a.getFullYear();
+        var month = months[a.getMonth()];
+        if (month < 10) month = '0' + month;
+        var date = a.getDate();
+        if (date < 10) date = '0' + date;
+        var day = days[a.getDay()];
+        var dates = month + '-' + date + ' , ' + day;
+        return dates;
     };
-};
 
-var toggleWeatherUnits = function() {
-    var self = $(this);
-    var units = self.data('units');
-    var symbol = self.data('symbol');
-    var windunits = self.data('windunits');
-    self.addClass('active').siblings().removeClass('active');
-    $('.set-units').append('<div class="disabled"></div>');
-    $('.current').empty();
-    $('.forecast').empty();
-    weatherWidget(units, symbol, windunits);
-};
+    var getTimes = function(timestamp) {
+        var a = new Date(timestamp * 1000);
+        var hours = a.getHours();
+        if (hours < 10) hours = '0' + hours;
+        var minutes = a.getMinutes();
+        if (minutes < 10) minutes = '0' + minutes;
+        var seconds = a.getSeconds();
+        if (seconds < 10) seconds = '0' + seconds;
+        var times = hours + ':' + minutes + ':' + seconds;
+        return times;
+    };
 
-$(function() {
-    Cufon.replace('h1', {
-        fontFamily: 'Helvetica Neue'
+    var degToCompass = function(deg) {
+        val = Math.round((deg - 11.25) / 22.5);
+        arr = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+        return arr[val % 16];
+    };
+
+    var weatherWidget = function() {
+        var cnt = 6;
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var data_current = 'http://api.openweathermap.org/data/2.5/weather?lat=' + position.coords.latitude + '&lon=' + position.coords.longitude + '&units=metric&lang=zh_cn&callback=?';
+                var data_forecast = 'http://api.openweathermap.org/data/2.5/forecast/daily?lat=' + position.coords.latitude + '&lon=' + position.coords.longitude + '&cnt=' + cnt + '&units=metric&lang=zh_cn&callback=?';
+                juicer.register('getDates', getDates);
+                juicer.register('getTimes', getTimes);
+                juicer.register('degToCompass', degToCompass);
+                var xhrCurrent = new XMLHttpRequest();
+                var xhrForecast = new XMLHttpRequest();
+                xhrCurrent.open('GET', data_current, true);
+                xhrForecast.open('GET', data_forecast, true);
+                xhrCurrent.onreadystatechange = function() {
+                    if (xhrCurrent.readyState==4 && xhrCurrent.status==200) {
+                        var data = JSON.parse(xhrCurrent.responseText);
+                        alert('OK');
+                        console.log(data);
+                        $.fillmore({
+                            src: 'bg/' + data.weather[0].icon + '.jpg'
+                        });
+                        var tpl = require('tpl/weather_current.tpl');
+                        tpl = juicer(tpl, {
+                            data: data
+                        });
+                        $('#current').append(tpl).fadeIn();
+                        seajs.use(['cufon', 'HelveticaNeue'], function() {
+                            Cufon.replace('.weather-current-temp', {
+                                fontFamily: 'Helvetica Neue',
+                                fontSize: '200'
+                            });
+                        });
+                        $('.loading').fadeOut();
+                    }
+                };
+                xhrForecast.onreadystatechange = function() {
+                    if (xhrForecast.readyState==4 && xhrForecast.status==200) {
+                        var data = JSON.parse(xhrForecast.responseText);
+                        var tpl = require('tpl/weather_forecast.tpl');
+                        tpl = juicer(tpl, {
+                            data: data
+                        });
+                        $('#forecast').append(tpl);
+                    }
+                }
+                xhrCurrent.send();
+                xhrForecast.send();
+            });
+        } else {
+            console.log("Geolocation is not supported by this browser.");
+        };
+    };
+
+    $(function() {
+        weatherWidget();
+        seajs.use(['jQueryUI', 'nerveSlider', 'nerveSliderCSS'], function() {
+            $('#weather').nerveSlider({
+                slideTransitionEasing: 'easeOutExpo',
+                sliderWidth: '100%',
+                sliderHeight: '100%',
+                sliderFullscreen: true,
+                sliderAutoPlay: false,
+                showPause: false,
+                waitForLoad: true
+            });
+        });
     });
-    weatherWidget('metric', '&#8451;', 'm/s');
-    $(document).on('click', '[data-action=set-units]', toggleWeatherUnits);
-});
 
+});
 /*
  * jQuery JSONP Core Plugin 2.4.0 (2012-08-21)
  *
