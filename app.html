@@ -6,7 +6,7 @@
         <link rel="shortcut icon" href="images/icon16.png" type="image/x-icon">
         <link rel="stylesheet" type="text/css" media="all" href="css/reset.css">
         <link rel="stylesheet" type="text/css" media="all" href="css/app.css">
-        <link rel="stylesheet" type="text/css" media="all" href="scripts/NerveSlider/nerveSlider.min.css">
+        <link rel="stylesheet" type="text/css" media="all" href="scripts/superslides/stylesheets/superslides.css">
     </head>
     <body>
     <h1>Open Weather</h1>
@@ -37,15 +37,39 @@
         </div>
     </div>
     <div id="weather">
-        <div id="current"></div>
-        <div id="forecast"><div class="item"></div></div>
+        <div id="slides">
+            <div class="slides-container">
+                <div id="current"></div>
+                <div id="hourly"><div id="hourly-items" class="item"><h2 class="title">HOURLY FORECAST</h2></div></div>
+                <div id="forecast">
+                    <div class="item">
+                        <h2 class="title">6 DAYS FORECAST</h2>
+                    </div>
+                </div>
+                <div id="temperature">
+                    <div class="chart-wrapper">
+                        <h2 class="title">13 DAYS TEMPERATURE CHARTS</h2>
+                        <div id="temperature-charts"></div>
+                    </div>
+                </div>
+            </div>
+            <nav class="slides-navigation">
+                <a class="next"><span></span></a>
+                <a class="prev"><span></span></a>
+            </nav>
+        </div>
     </div>
     <div class="weather-data-source">Weather Data from <a href="http://openweathermap.org/" target="_blank">OpenWeatherMap.org</a><br>Design & Code BY Solar@Xi'an China - <a href="https://github.com/solarcellsky/openweather_desktop" target="_blank">Get Source Code From Github</a></div>
     <script src="scripts/jquery.min.js"></script>
     <script src="scripts/jqueryui/js/jquery-ui-1.10.3.custom.min.js"></script>
     <script src="scripts/cufon/cufon-yui.js"></script>
     <script src="scripts/cufon/Helvetica_Neue_100.font.js"></script>
-    <script src="scripts/NerveSlider/jquery.nerveSlider.min.js"></script>
+    <script src="scripts/superslides/javascripts/jquery.easing.1.3.js"></script>
+    <script src="scripts/superslides/javascripts/jquery.animate-enhanced.min.js"></script>
+    <script src="scripts/superslides/javascripts/hammer.min.js"></script>
+    <script src="scripts/superslides/jquery.superslides.min.js"></script>
+    <script src="scripts/highcharts/highcharts.js"></script>
+    <script src="scripts/highcharts/highcharts-more.js"></script>
     <script src="scripts/app.js"></script>
     </body>
 </html>

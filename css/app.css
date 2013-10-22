@@ -386,27 +386,38 @@ transform: rotate(900deg);
     background-color: rgba(0,0,0,.35);
     overflow: hidden
 }
-#current,#forecast{
+#current,#hourly,#temperature,#forecast{
+    display: none;
     width: 100%;
     height: 100%;
     position: relative;
     text-align:center;
     color: #fff;
-    text-shadow: 0 0 15px rgba(0,0,0,1),0 -1px 1px rgba(0,0,0,1)
+    text-shadow: 0 0 15px rgba(0,0,0,1),0 -1px 1px rgba(0,0,0,1);
 }
+.chart-wrapper{padding: 100px 0 0}
+#temperature-charts{width: 85%;margin: 0 auto}
 .item{
     padding: 150px 0 0;
     height: 100%;
     width: 100%
 }
-.local{font-size: 200%; text-transform: uppercase}
+.title{font-size: 200%}
+.weather-current-temp{font-size: 1000%}
+.local{font-size: 240%; text-transform: uppercase}
 .w-icon-l{position: absolute;top:20%; left:60%}
 .day-item{
     display: inline-block;
     padding-top: 50px;
     width: 160px
 }
-li.min{font-size: 200%}
+.hourly-item{
+    display: inline-block;
+    padding-top: 50px;
+    width: 90px
+}
+.hourly-item img{ width: 70px}
+li.min,.hourly-temp{font-size: 200%}
 li.max{font-size: 200%;font-weight: 700}
 .weather-data-source{
     width: 100%;
@@ -416,30 +427,25 @@ li.max{font-size: 200%;font-weight: 700}
     bottom: 0;
     text-align: center;
     color: #eee;
-    font-size: 10px
+    font-size: 10px;
+    z-index: 110
 }
 
-.set-units{
-    height: 20px;
-    position: absolute;
-    z-index: 9999;
-    right: 0;
-    bottom: 100px
-}
-.set-units .disabled{
-    position: absolute;
-    right: 0;
-    top: 0;
-    background: rgba(255,255,255,.5);
+.error{
+    background: #454545;
+    color: #fff;
+    width: 100%;
     height: 100%;
-    width: 100%
+    font-size: 200%;
+    position: absolute;
+    display: table;
+    left: 0;
+    top: 0;
+    z-index: 100000
 }
-.set-units li{
-    font-size: 12px;
-    height: 20px;
-    line-height: 20px;
-    float: left;
-    background: #bbb;
-    padding: 0 8px;
-    cursor: pointer
+.error span{
+    width: 100%;
+    text-align: center;
+    display: table-cell;
+    vertical-align: middle
 }

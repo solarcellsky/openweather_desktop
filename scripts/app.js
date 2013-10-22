@@ -1,3 +1,5 @@
+var time_zone = 1000 * (new Date().getTimezoneOffset())*(-60);
+
 var getDates = function(UNIX_timestamp) {
     var a = new Date(UNIX_timestamp * 1000);
     var months = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
@@ -13,33 +15,224 @@ var getDates = function(UNIX_timestamp) {
 };
 
 var getTimes = function(timestamp) {
-    var a = new Date(timestamp * 1000);
-    var hours = a.getHours();
-    if (hours < 10) hours = '0' + hours;
-    var minutes = a.getMinutes();
-    if (minutes < 10) minutes = '0' + minutes;
-    var seconds = a.getSeconds();
-    if (seconds < 10) seconds = '0' + seconds;
-    var times = hours + ':' + minutes + ':' + seconds;
-    return times;
-};
+        var a = new Date(timestamp * 1000);
+        var hours = a.getHours();
+        if (hours < 10) hours = '0' + hours;
+        var minutes = a.getMinutes();
+        if (minutes < 10) minutes = '0' + minutes;
+        var times = hours + ':' + minutes;
+        return times;
+    };
 
-var degToCompass = function(deg) {
-    val = Math.round((deg - 11.25) / 22.5);
-    arr = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
-    return arr[val % 16];
-};
+    var degToCompass = function(deg) {
+        val = Math.round((deg - 11.25) / 22.5);
+        arr = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+        return arr[val % 16];
+    };
+
+    var showHourlyForecast = function(forecast) {
+
+        var curdate = new Date((new Date()).getTime() - 180 * 60 * 1000);
+        var html = '';
+        var cnt = 0;
+        for (var i = 0; i < forecast.length; i++) {
+
+            var dt = new Date(forecast[i].dt * 1000);
+
+            if (curdate > dt) continue;
+            if (cnt > 10) break;
+            cnt++;
+
+            var temp = Math.round(10 * (forecast[i].main.temp)) / 10;
+            var tmin = Math.round(10 * (forecast[i].main.temp_min)) / 10;
+            var tmax = Math.round(10 * (forecast[i].main.temp_max)) / 10;
+
+            var text = forecast[i].weather[0].description;
+            var gust = forecast[i].wind.speed;
+            var deg = forecast[i].wind.deg;
+            var pressure = forecast[i].main.pressure;
+            var humidity =  forecast[i].main.humidity;
+            var cloud = forecast[i].clouds.all;
+            var icon = forecast[i].weather[0].icon;
+
+            html = html + '<ul class="hourly-item">';
+            html = html + '<li>' + getTimes(forecast[i].dt) + '</li><li style="height:80px;background:url(weather_icons/s/' + icon + '.png) no-repeat center center;background-size:70px auto"></li>\
+                <li>' + text + '</li>\
+                <li class="hourly-temp">' + temp + '&deg;</li>\
+                <li>' + gust + ' m/s ' + degToCompass(deg) + '</li>\
+                <li>' + pressure + ' hpa</li>\
+                <li>' + humidity + ' %</li>\
+                </ul>';
+        }
+
+        $("#hourly-items").append(html);
+
+    };
+
+    var showTemperatureChart = function(daily) {
+
+        var time = new Array();
+        var tmp = new Array();
+        var tmpr = new Array();
+        var rain = new Array();
+        var snow = new Array();
+
+
+        for (var i = 0; i < daily.length - 1; i++) {
+
+            tmp.push(Math.round(10 * (daily[i].temp.day)) / 10);
+            var dt = new Date(daily[i].dt * 1000 + time_zone);
+            time.push(dt);
+
+            var tmpi = Math.round(10 * (daily[i].temp.min)) / 10;
+            var tmpa = Math.round(10 * (daily[i].temp.max)) / 10;
+            tmpr.push([tmpi, tmpa]);
+
+
+            if (daily[i]['rain']) {
+                rain.push(Math.round(daily[i]['rain'] * 100) / 100);
+            } else {
+                rain.push(0);
+            }
+            if (daily[i]['snow']) {
+                snow.push(Math.round(daily[i]['snow'] * 100) / 100);
+            } else {
+                snow.push(0);
+            }
+        }
+
+
+        $('#temperature-charts').highcharts({
+            chart: {
+                backgroundColor: 'rgba(0, 0, 0, 0)'
+            },
+            title: NaN,
+            xAxis: {
+                categories: time,
+                labels: {
+                    formatter: function() {
+                        return Highcharts.dateFormat('%d %b', this.value);
+                    },
+                    style: {
+                        color: '#ffffff'
+                    }
+                }
+            },
+
+            yAxis: [{
+                labels: {
+                    format: '{value}°C',
+                    style: {
+                        color: '#ffffff'
+                    }
+                },
+                title: {
+                    text: NaN,
+                    style: {
+                        color: '#ffffff'
+                    }
+                },
+                gridLineColor: 'rgba(255, 255, 255, .1)'
+            }, {
+                labels: {
+                    format: '{value} mm',
+                    style: {
+                        color: '#eeeeee'
+                    }
+                },
+                opposite: true,
+                title: {
+                    text: NaN,
+                    style: {
+                        color: '#4572A7'
+                    }
+                },
+                gridLineColor: 'rgba(255, 255, 255, .1)'
+            }],
+            tooltip: {
+                useHTML: true,
+                shared: true,
+                formatter: function() {
+                    var s = '<small>' + Highcharts.dateFormat('%d %b', this.x) + '</small><table>';
+                    $.each(this.points, function(i, point) {
+                        console.log(point);
+                        if (point.y != 0)
+                            s += '<tr><td style="color:' + point.series.color + '">' + point.series.name + ': </td>' +
+                                '<td style="text-align: right"><b>' + point.y + '</b></td></tr>';
+                    });
+                    return s + '</table>';
+                },
+                backgroundColor: {
+                    linearGradient: [0, 0, 0, 50],
+                    stops: [
+                        [0, 'rgba(96, 96, 96, .8)'],
+                        [1, 'rgba(16, 16, 16, .8)']
+                    ]
+                },
+                style: {
+                    color: '#FFF'
+                }
+            },
+            plotOptions: {
+                column: {
+                    stacking: 'normal'
+                }
+            },
+            legend: NaN,
+            series: [{
+                name: 'Snow',
+                type: 'column',
+                color: '#909090',
+                yAxis: 1,
+                data: snow,
+                stack: 'precipitation'
+            }, {
+                name: 'Rain',
+                type: 'column',
+                color: '#00a2ee',
+                borderWidth: '0',
+                yAxis: 1,
+                data: rain,
+                stack: 'precipitation'
+            }, {
+                name: 'Temperature',
+                type: 'spline',
+                color: '#ffb525',
+                marker: {
+                    lineWidth: 2,
+                    lineColor: '#ffb525',
+                    fillColor: '#ffffff'
+                },
+                data: tmp
+            }, {
+                name: 'Temperature min',
+                data: tmpr,
+                type: 'arearange',
+                lineWidth: 0,
+                linkedTo: ':previous',
+                color: '#2572ff',
+                fillOpacity: 0.3,
+                zIndex: 0
+            }]
+        });
+    };
 
 var weatherWidget = function() {
     var cnt = 6;
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
             var data_current = 'http://api.openweathermap.org/data/2.5/weather?lat=' + position.coords.latitude + '&lon=' + position.coords.longitude + '&units=metric&lang=zh_cn';
+            var data_hourly = 'http://api.openweathermap.org/data/2.5/forecast/hourly?lat=' + position.coords.latitude + '&lon=' + position.coords.longitude + '&cnt=1&units=metric&lang=zh_cn';
             var data_forecast = 'http://api.openweathermap.org/data/2.5/forecast/daily?lat=' + position.coords.latitude + '&lon=' + position.coords.longitude + '&cnt=' + cnt + '&units=metric&lang=zh_cn';
+            var data_temperature = 'http://api.openweathermap.org/data/2.5/forecast/daily?lat=' + position.coords.latitude + '&lon=' + position.coords.longitude + '&cnt=15&units=metric&lang=zh_cn';
             var xhrCurrent = new XMLHttpRequest();
+            var xhrHourly = new XMLHttpRequest();
             var xhrForecast = new XMLHttpRequest();
+            var xhrTemperature = new XMLHttpRequest();
             xhrCurrent.open('GET', data_current, true);
+            xhrHourly.open('GET', data_hourly, true);
             xhrForecast.open('GET', data_forecast, true);
+            xhrTemperature.open('GET', data_temperature, true);
             xhrCurrent.onreadystatechange = function() {
                 if (xhrCurrent.readyState==4 && xhrCurrent.status==200) {
                     var data = JSON.parse(xhrCurrent.responseText);
@@ -90,6 +283,12 @@ var weatherWidget = function() {
                     $('.loading').fadeOut();
                 }
             };
+            xhrHourly.onreadystatechange = function() {
+                if (xhrHourly.readyState==4 && xhrHourly.status==200) {
+                    var data = JSON.parse(xhrHourly.responseText);
+                    showHourlyForecast(data.list);
+                }
+            };
             xhrForecast.onreadystatechange = function() {
                 if (xhrForecast.readyState==4 && xhrForecast.status==200) {
                     var data = JSON.parse(xhrForecast.responseText);
@@ -105,7 +304,14 @@ var weatherWidget = function() {
                         item += '</li><li class="max">';
                         item += (data.list[i].temp.max).toFixed(1) + '&deg;';
                         item += '</li><li class="min">';
-                        item += (data.list[i].temp.min).toFixed(1) + '&deg;';
+                        item += (data.list[i].temp.min).toFixed(1) + '&deg;<li>';
+                        item += data.list[i].humidity;
+                        item += ' %</li><li>'
+                        item += data.list[i].pressure;
+                        item += ' hpa</li><li>';
+                        item += data.list[i].speed;
+                        item += ' m/s ';
+                        item += degToCompass(data.list[i].deg);
                         item += '</li></ul>';
 
                         items.push(item);
@@ -117,9 +323,17 @@ var weatherWidget = function() {
 
                     $('.loading').remove();
                 }
-            }
+            };
+            xhrTemperature.onreadystatechange = function() {
+                if (xhrTemperature.readyState==4 && xhrTemperature.status==200) {
+                    var data = JSON.parse(xhrTemperature.responseText);
+                    showTemperatureChart(data.list);
+                }
+            };
             xhrCurrent.send();
+            xhrHourly.send();
             xhrForecast.send();
+            xhrTemperature.send();
         });
     } else {
         console.log("Geolocation is not supported by this browser.");
@@ -128,14 +342,18 @@ var weatherWidget = function() {
 
 $(function() {
     weatherWidget();
-    $('#weather').nerveSlider({
-        slideTransitionEasing: 'easeOutExpo',
-        sliderWidth: '100%',
-        sliderHeight: '100%',
-        sliderFullscreen: true,
-        sliderAutoPlay: false,
-        showPause: false,
-        waitForLoad: true
+    var $slides = $('#slides');
+
+    Hammer($slides[0]).on("swipeleft", function(e) {
+        $slides.data('superslides').animate('next');
+    });
+
+    Hammer($slides[0]).on("swiperight", function(e) {
+        $slides.data('superslides').animate('prev');
+    });
+
+    $slides.superslides({
+        hashchange: true
     });
 });
 
