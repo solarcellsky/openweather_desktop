@@ -10,32 +10,7 @@
     </head>
     <body>
     <h1>Open Weather</h1>
-    <div class="loading">
-        <div class="loader-wrapper">
-        <div class="windows8">
-        <div class="wBall" id="wBall_1">
-        <div class="wInnerBall">
-        </div>
-        </div>
-        <div class="wBall" id="wBall_2">
-        <div class="wInnerBall">
-        </div>
-        </div>
-        <div class="wBall" id="wBall_3">
-        <div class="wInnerBall">
-        </div>
-        </div>
-        <div class="wBall" id="wBall_4">
-        <div class="wInnerBall">
-        </div>
-        </div>
-        <div class="wBall" id="wBall_5">
-        <div class="wInnerBall">
-        </div>
-        </div>
-        </div>
-        </div>
-    </div>
+    <div class="loading"><div id="spinner"></div></div>
     <div id="weather">
         <div id="slides">
             <div class="slides-container">
@@ -61,6 +36,7 @@
     </div>
     <div class="weather-data-source">Weather Data from <a href="http://openweathermap.org/" target="_blank">OpenWeatherMap.org</a><br>Design & Code BY Solar@Xi'an China - <a href="https://github.com/solarcellsky/openweather_desktop" target="_blank">Get Source Code From Github</a></div>
     <script src="scripts/jquery.min.js"></script>
+    <script src="scripts/raphael-min.js"></script>
     <script src="scripts/jqueryui/js/jquery-ui-1.10.3.custom.min.js"></script>
     <script src="scripts/cufon/cufon-yui.js"></script>
     <script src="scripts/cufon/Helvetica_Neue_100.font.js"></script>
