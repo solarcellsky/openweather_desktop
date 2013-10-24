@@ -266,7 +266,6 @@ var getTimes = function(timestamp) {
     };
 
 var weatherWidget = function() {
-    spinner('spinner', 120, 120, 16, 15, '#fff');
     var cnt = 6;
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
@@ -390,6 +389,7 @@ var weatherWidget = function() {
 };
 
 $(function() {
+    spinner('spinner', 120, 120, 16, 15, '#fff');
     weatherWidget();
     var $slides = $('#slides');
 
